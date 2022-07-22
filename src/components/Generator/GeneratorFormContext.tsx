@@ -3,16 +3,21 @@ import {
   createContext,
   FC,
   PropsWithChildren,
+  useCallback,
   useEffect,
   useMemo,
 } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { fetchGrades } from "../../features/services/GradesScrapper/fetchGrades";
 import { IExtractedForumTopic } from "../../features/services/GradesScrapper/interfaces/IExtractedForumTopic";
-import { GeneratorFormStateStorage } from "./GeneratorFormStateStorage";
+import {
+  GeneratorFormStateStorage,
+  getSavedState,
+} from "./GeneratorFormStateStorage";
 import { GENERATOR_FORM_COURSES } from "./utils/GENERATOR_FORM_COURSES";
 import { IGeneratorFormCourse } from "./utils/IGeneratorFormCourse";
 import { IGeneratorFormCourseYear } from "./utils/IGeneratorFormCourseYear";
+import { IGeneratorFormCourseYearLabel } from "./utils/IGeneratorFormCourseYearLabel";
 
 export type IGeneratorFormContext = {
   grades: IExtractedForumTopic[];
@@ -20,6 +25,7 @@ export type IGeneratorFormContext = {
 
   targetCourse: IGeneratorFormCourse | undefined;
   targetCourseYear: IGeneratorFormCourseYear | undefined;
+  targetCourseYearClass: IGeneratorFormCourseYearLabel | undefined;
 };
 
 export type IGeneratorFormContextFieldValues = {
@@ -48,16 +54,11 @@ export const GeneratorFormContextProvider: FC<PropsWithChildren<{}>> = ({
 
   const methods = useForm<IGeneratorFormContextFieldValues>();
 
-  const { watch, setValue, reset } = methods;
+  const { watch, setValue } = methods;
 
   const selectedCourse = watch("course");
   const selectedYear = watch("year");
-
-  useEffect(() => {
-    reset({
-      course: GENERATOR_FORM_COURSES[0].id,
-    });
-  }, []);
+  const selectedClass = watch("class");
 
   const targetCourse = useMemo(
     () => GENERATOR_FORM_COURSES.find((i) => i.id === selectedCourse),
@@ -69,13 +70,22 @@ export const GeneratorFormContextProvider: FC<PropsWithChildren<{}>> = ({
     [targetCourse, selectedYear]
   );
 
-  useEffect(() => {
-    setValue("year", null);
-  }, [selectedCourse]);
+  const targetCourseYearClass = useMemo(
+    () => (targetCourseYear?.labels ?? []).find((i) => i.id === selectedClass),
+    [targetCourseYear, selectedClass]
+  );
 
   useEffect(() => {
-    setValue("class", null);
-  }, [selectedYear]);
+    if (!targetCourseYear && selectedYear) {
+      setValue("year", null);
+    }
+  }, [selectedCourse, selectedYear, targetCourseYear]);
+
+  useEffect(() => {
+    if (selectedClass && !targetCourseYearClass) {
+      setValue("class", null);
+    }
+  }, [selectedYear, selectedClass, targetCourseYearClass]);
 
   useEffect(() => {
     setValue("forumTopic", grades[grades.length - 1]?.link ?? null);
@@ -90,6 +100,7 @@ export const GeneratorFormContextProvider: FC<PropsWithChildren<{}>> = ({
             gradesQuery,
             targetCourse,
             targetCourseYear,
+            targetCourseYearClass,
           }}
         >
           {children}

@@ -1,11 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { saveAs } from "file-saver";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import Alert from "react-bootstrap/Alert";
 import Button from "react-bootstrap/Button";
 import { useDebounce } from "use-debounce";
 import { fetchForumTopicPDFAttachmentLink } from "../../features/services/GradesScrapper/fetchForumTopicPDFAttachmentLink";
 import { getURLWithProxy } from "../../features/utils/getURLWithProxy";
+import { GeneratorFormContext } from "./GeneratorFormContext";
 import { useGeneratorFormFields } from "./useGeneratorFormFields";
 
 type IHandleGenerateOptions = {
@@ -18,14 +19,19 @@ const generateImageForClassesModule = import(
 );
 
 export const GeneratorFormResult = () => {
-  const [isError, setIsError] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isHandleGenerateError, setHandleGenerateIsError] = useState(false);
+  const [isHandleGenerateLoading, setIsHandleGenerateLoading] = useState(false);
 
   const [resultURL, setResultURL] = useState<string | null>(null);
 
-  const { selectedClass, selectedForumTopic } = useGeneratorFormFields();
+  const { selectedForumTopic } = useGeneratorFormFields();
 
-  const { data: pdfLink, isError: pdfLinkIsError } = useQuery(
+  const { gradesQuery, targetCourseYearClass } =
+    useContext(GeneratorFormContext);
+
+  const selectedClass = targetCourseYearClass?.id ?? null;
+
+  const pdfLinkQuery = useQuery(
     [selectedForumTopic, "pdfAttachmentLink"],
     async () => {
       if (!selectedForumTopic) {
@@ -40,6 +46,8 @@ export const GeneratorFormResult = () => {
     }
   );
 
+  const { data: pdfLink } = pdfLinkQuery;
+
   const [debouncedPDFLink] = useDebounce(pdfLink, 50);
   const [debouncedSelectedClass] = useDebounce(selectedClass, 50);
 
@@ -53,12 +61,12 @@ export const GeneratorFormResult = () => {
 
   const handleGenerate = useCallback(
     async (options: IHandleGenerateOptions) => {
-      setIsError(false);
+      setHandleGenerateIsError(false);
 
       const { pdfLink, selectedClass } = options;
 
       if (selectedClass && pdfLink) {
-        setIsLoading(true);
+        setIsHandleGenerateLoading(true);
 
         try {
           await generateImageForClassesModule
@@ -67,24 +75,28 @@ export const GeneratorFormResult = () => {
             )
             .then((blob) => updateResult(blob));
         } catch (error) {
-          setIsError(true);
+          setHandleGenerateIsError(true);
         }
       } else {
         updateResult(null);
       }
 
-      setIsLoading(false);
+      setIsHandleGenerateLoading(false);
     },
     []
   );
 
-  const _isLoading = Boolean(
-    isLoading ||
+  const isLoading = Boolean(
+    pdfLinkQuery.isLoading ||
+      gradesQuery.isLoading ||
+      isHandleGenerateLoading ||
       pdfLink !== debouncedPDFLink ||
       selectedClass !== debouncedSelectedClass
   );
 
-  const _isError = Boolean(pdfLinkIsError || isError);
+  const isError = Boolean(
+    pdfLinkQuery.isError || gradesQuery.isError || isHandleGenerateError
+  );
 
   useEffect(() => {
     handleGenerate({
@@ -104,7 +116,7 @@ export const GeneratorFormResult = () => {
     );
   }
 
-  if (_isLoading) {
+  if (isLoading) {
     return (
       <>
         <section className="my-4">
@@ -116,7 +128,7 @@ export const GeneratorFormResult = () => {
     );
   }
 
-  if (_isError || !resultURL) {
+  if (isError || !resultURL) {
     return (
       <>
         <section className="my-4">

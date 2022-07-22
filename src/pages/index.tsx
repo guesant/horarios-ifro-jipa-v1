@@ -22,7 +22,9 @@ const Home: NextPage = () => {
 
       <main>
         <GeneratorFormContextProvider>
-          <GeneratorForm />
+          <GeneratorForm
+            key={typeof window !== "undefined" ? "window" : "ssr"}
+          />
         </GeneratorFormContextProvider>
       </main>
 
