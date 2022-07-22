@@ -1,20 +1,18 @@
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import {
   createContext,
-  Dispatch,
   FC,
   PropsWithChildren,
-  SetStateAction,
   useEffect,
   useMemo,
-  useState,
 } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import { fetchGrades } from "../../features/services/GradesScrapper/fetchGrades";
+import { IExtractedForumTopic } from "../../features/services/GradesScrapper/interfaces/IExtractedForumTopic";
+import { GeneratorFormStateStorage } from "./GeneratorFormStateStorage";
 import { GENERATOR_FORM_COURSES } from "./utils/GENERATOR_FORM_COURSES";
 import { IGeneratorFormCourse } from "./utils/IGeneratorFormCourse";
 import { IGeneratorFormCourseYear } from "./utils/IGeneratorFormCourseYear";
-import { IExtractedForumTopic } from "../../features/services/GradesScrapper/interfaces/IExtractedForumTopic";
-import { fetchGrades } from "../../features/services/GradesScrapper/fetchGrades";
-import { useForm, FormProvider } from "react-hook-form";
 
 export type IGeneratorFormContext = {
   grades: IExtractedForumTopic[];
@@ -85,16 +83,18 @@ export const GeneratorFormContextProvider: FC<PropsWithChildren<{}>> = ({
 
   return (
     <FormProvider {...methods}>
-      <GeneratorFormContext.Provider
-        value={{
-          grades,
-          gradesQuery,
-          targetCourse,
-          targetCourseYear,
-        }}
-      >
-        {children}
-      </GeneratorFormContext.Provider>
+      <GeneratorFormStateStorage>
+        <GeneratorFormContext.Provider
+          value={{
+            grades,
+            gradesQuery,
+            targetCourse,
+            targetCourseYear,
+          }}
+        >
+          {children}
+        </GeneratorFormContext.Provider>
+      </GeneratorFormStateStorage>
     </FormProvider>
   );
 };
