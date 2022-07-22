@@ -7,16 +7,30 @@ import {
   useState,
 } from "react";
 import { useFormContext } from "react-hook-form";
-import { IGeneratorFormContextFieldValues } from "./GeneratorFormContext";
+import { IGeneratorFormContextFieldValues } from "./interfaces/IGeneratorFormContextFieldValues";
+import { theLocalStorage } from "../../features/utils/theLocalStorage";
 import { useGeneratorFormFields } from "./useGeneratorFormFields";
 
-const lStorage: Storage | undefined = globalThis?.localStorage;
+const KEY = "generatorFormState";
 
-export const getSavedState = () =>
-  JSON.parse(lStorage?.getItem("generatorFormState") ?? "false");
+const getSavedState = () => JSON.parse(theLocalStorage?.getItem(KEY) ?? "null");
 
 const setSavedState = (state: any) =>
-  lStorage?.setItem("generatorFormState", JSON.stringify(state));
+  theLocalStorage?.setItem(KEY, JSON.stringify(state));
+
+const useCurrentState = () => {
+  const { selectedYear, selectedClass, selectedCourse } =
+    useGeneratorFormFields();
+
+  return useMemo(
+    () => ({
+      year: selectedYear,
+      class: selectedClass,
+      course: selectedCourse,
+    }),
+    [selectedYear, selectedClass, selectedCourse]
+  );
+};
 
 export const GeneratorFormStateStorage: FC<PropsWithChildren<{}>> = ({
   children,
@@ -25,20 +39,10 @@ export const GeneratorFormStateStorage: FC<PropsWithChildren<{}>> = ({
 
   const { reset } = useFormContext<IGeneratorFormContextFieldValues>();
 
-  const { selectedYear, selectedClass, selectedCourse } =
-    useGeneratorFormFields();
-
-  const currentState = useMemo(
-    () => ({
-      year: selectedYear,
-      class: selectedClass,
-      course: selectedCourse,
-    }),
-    [selectedYear, selectedClass, selectedCourse]
-  );
+  const currentState = useCurrentState();
 
   const restoreState = useCallback(() => {
-    if (!lStorage) {
+    if (!theLocalStorage) {
       return;
     }
 

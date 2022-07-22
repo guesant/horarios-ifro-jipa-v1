@@ -23,7 +23,6 @@ export const GeneratorFormResult = () => {
   const [isHandleGenerateLoading, setIsHandleGenerateLoading] = useState(false);
 
   const [resultURL, setResultURL] = useState<string | null>(null);
-
   const { selectedForumTopic } = useGeneratorFormFields();
 
   const { gradesQuery, targetCourseYearClass } =
@@ -51,13 +50,15 @@ export const GeneratorFormResult = () => {
   const [debouncedPDFLink] = useDebounce(pdfLink, 50);
   const [debouncedSelectedClass] = useDebounce(selectedClass, 50);
 
-  const updateResult = useCallback(
-    (blob: Blob | null) => {
-      resultURL && URL.revokeObjectURL(resultURL);
-      setResultURL(blob ? URL.createObjectURL(blob) : null);
-    },
-    [resultURL]
-  );
+  const updateResultBlob = useCallback((resultBlob: Blob | null) => {
+    setResultURL((resultURL) => {
+      if (resultURL) {
+        URL.revokeObjectURL(resultURL);
+      }
+
+      return resultBlob && URL.createObjectURL(resultBlob);
+    });
+  }, []);
 
   const handleGenerate = useCallback(
     async (options: IHandleGenerateOptions) => {
@@ -73,17 +74,17 @@ export const GeneratorFormResult = () => {
             .then(({ generateImageForClasses }) =>
               generateImageForClasses({ pdfLink }, [selectedClass])
             )
-            .then((blob) => updateResult(blob));
+            .then((blob) => updateResultBlob(blob));
         } catch (error) {
           setHandleGenerateIsError(true);
         }
       } else {
-        updateResult(null);
+        updateResultBlob(null);
       }
 
       setIsHandleGenerateLoading(false);
     },
-    []
+    [updateResultBlob]
   );
 
   const isLoading = Boolean(
@@ -134,7 +135,7 @@ export const GeneratorFormResult = () => {
         <section className="my-4">
           <h1>Resultado</h1>
 
-          <Alert variant="alert">Não foi possível gerar a imagem.</Alert>
+          <Alert variant="danger">Não foi possível gerar a imagem.</Alert>
         </section>
       </>
     );

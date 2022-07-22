@@ -3,17 +3,14 @@ import {
   createContext,
   FC,
   PropsWithChildren,
-  useCallback,
   useEffect,
   useMemo,
 } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { fetchGrades } from "../../features/services/GradesScrapper/fetchGrades";
 import { IExtractedForumTopic } from "../../features/services/GradesScrapper/interfaces/IExtractedForumTopic";
-import {
-  GeneratorFormStateStorage,
-  getSavedState,
-} from "./GeneratorFormStateStorage";
+import { GeneratorFormStateStorage } from "./GeneratorFormStateStorage";
+import { IGeneratorFormContextFieldValues } from "./interfaces/IGeneratorFormContextFieldValues";
 import { GENERATOR_FORM_COURSES } from "./utils/GENERATOR_FORM_COURSES";
 import { IGeneratorFormCourse } from "./utils/IGeneratorFormCourse";
 import { IGeneratorFormCourseYear } from "./utils/IGeneratorFormCourseYear";
@@ -26,14 +23,6 @@ export type IGeneratorFormContext = {
   targetCourse: IGeneratorFormCourse | undefined;
   targetCourseYear: IGeneratorFormCourseYear | undefined;
   targetCourseYearClass: IGeneratorFormCourseYearLabel | undefined;
-};
-
-export type IGeneratorFormContextFieldValues = {
-  course: string | null;
-  year: string | null;
-  class: string | null;
-
-  forumTopic: string | null;
 };
 
 export const GeneratorFormContext = createContext({} as IGeneratorFormContext);
