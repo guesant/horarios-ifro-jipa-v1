@@ -1,11 +1,16 @@
-import { useMemo } from "react";
+import { useContext, useMemo } from "react";
 import Alert from "react-bootstrap/Alert";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import ToggleButton from "react-bootstrap/ToggleButton";
+import { GeneratorFormContext } from "./GeneratorFormContext";
 import { useGeneratorFormFields } from "./useGeneratorFormFields";
 import { GENERATOR_FORM_COURSES } from "./utils/GENERATOR_FORM_COURSES";
 
 export const GeneratorFormLabel = () => {
+  const {
+    gradesQuery: { isLoading },
+  } = useContext(GeneratorFormContext);
+
   const { selectedCourse, selectedYear, selectedClass, setSelectedClass } =
     useGeneratorFormFields();
 
@@ -45,9 +50,10 @@ export const GeneratorFormLabel = () => {
                 type="radio"
                 key={radio.id}
                 value={radio.id}
-                name="radio-label"
+                name="radio-class"
+                disabled={isLoading}
                 variant={"outline-secondary"}
-                id={`radio-label-${radio.id}`}
+                id={`radio-class-${radio.id}`}
                 checked={selectedClass === radio.id}
                 onChange={(e) => setSelectedClass(e.currentTarget.value)}
               >

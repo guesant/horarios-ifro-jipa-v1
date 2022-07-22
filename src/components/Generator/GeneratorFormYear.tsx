@@ -5,10 +5,12 @@ import { GeneratorFormContext } from "./GeneratorFormContext";
 import { useGeneratorFormFields } from "./useGeneratorFormFields";
 
 export const GeneratorFormYear = () => {
-  const { targetCourse } = useContext(GeneratorFormContext);
+  const {
+    targetCourse,
+    gradesQuery: { isLoading },
+  } = useContext(GeneratorFormContext);
 
-  const { selectedCourse, selectedYear, setSelectedYear } =
-    useGeneratorFormFields();
+  const { selectedYear, setSelectedYear } = useGeneratorFormFields();
 
   if (!targetCourse) {
     return (
@@ -34,7 +36,8 @@ export const GeneratorFormYear = () => {
                 key={radio.id}
                 value={radio.id}
                 name="radio-year"
-                id={`radio-year-${selectedCourse}-${radio.id}`}
+                disabled={isLoading}
+                id={`radio-year-${radio.id}`}
                 variant={"outline-secondary"}
                 checked={selectedYear === radio.id}
                 onChange={(e) => setSelectedYear(e.currentTarget.value)}

@@ -1,9 +1,14 @@
+import { useContext } from "react";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import ToggleButton from "react-bootstrap/ToggleButton";
+import { GeneratorFormContext } from "./GeneratorFormContext";
 import { useGeneratorFormFields } from "./useGeneratorFormFields";
 import { GENERATOR_FORM_COURSES } from "./utils/GENERATOR_FORM_COURSES";
 
 export const GeneratorFormCourse = () => {
+  const {
+    gradesQuery: { isLoading },
+  } = useContext(GeneratorFormContext);
   const { selectedCourse, setSelectedCourse } = useGeneratorFormFields();
 
   return (
@@ -15,12 +20,13 @@ export const GeneratorFormCourse = () => {
           <ButtonGroup>
             {GENERATOR_FORM_COURSES.map((radio) => (
               <ToggleButton
-                key={radio.id}
                 type="radio"
-                name="radio"
+                key={radio.id}
                 value={radio.id}
-                id={`radio-${radio.id}`}
+                disabled={isLoading}
+                name="radio-courses"
                 variant={"outline-secondary"}
+                id={`radio-courses-${radio.id}`}
                 checked={selectedCourse === radio.id}
                 onChange={(e) => setSelectedCourse(e.currentTarget.value)}
               >
