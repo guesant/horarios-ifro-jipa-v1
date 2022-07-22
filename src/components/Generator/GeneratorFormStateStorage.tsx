@@ -3,6 +3,12 @@ import { useFormContext } from "react-hook-form";
 import { IGeneratorFormContextFieldValues } from "./GeneratorFormContext";
 import { useGeneratorFormFields } from "./useGeneratorFormFields";
 
+const getSavedState = () =>
+  JSON.parse(localStorage.getItem("generatorFormState") ?? "false");
+
+const setSavedState = (state: any) =>
+  localStorage.setItem("generatorFormState", JSON.stringify(state));
+
 export const GeneratorFormStateStorage: FC<PropsWithChildren<{}>> = ({
   children,
 }) => {
@@ -20,14 +26,8 @@ export const GeneratorFormStateStorage: FC<PropsWithChildren<{}>> = ({
     [selectedYear, selectedClass, selectedCourse]
   );
 
-  useEffect(() => {
-    localStorage.setItem("generatorFormState", JSON.stringify(currentState));
-  }, [currentState]);
-
   const restoreState = useCallback(() => {
-    const savedState = JSON.parse(
-      localStorage.getItem("generatorFormState") ?? "false"
-    );
+    const savedState = getSavedState();
 
     if (savedState) {
       reset(savedState);
@@ -37,6 +37,10 @@ export const GeneratorFormStateStorage: FC<PropsWithChildren<{}>> = ({
   useEffect(() => {
     restoreState();
   }, [restoreState]);
+
+  useEffect(() => {
+    setSavedState(currentState);
+  }, [currentState]);
 
   return <>{children}</>;
 };

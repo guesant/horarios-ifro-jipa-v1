@@ -5,7 +5,7 @@ import { GeneratorFormLabel } from "./GeneratorFormLabel";
 import { GeneratorFormResult } from "./GeneratorFormResult";
 import { GeneratorFormYear } from "./GeneratorFormYear";
 
-export const GeneratorForm = () => (
+const GeneratorForm = () => (
   <>
     <Container>
       <GeneratorFormGrades />
@@ -16,3 +16,5 @@ export const GeneratorForm = () => (
     </Container>
   </>
 );
+
+export default GeneratorForm;

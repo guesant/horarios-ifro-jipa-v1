@@ -1,10 +1,13 @@
 import type { NextPage } from "next";
+import dynamic from "next/dynamic";
 import Head from "next/head";
 import Footer from "../components/Footer/Footer";
-import Header from "../components/Header/Header";
-import { GeneratorForm } from "../components/Generator/GeneratorForm";
 import { GeneratorFormContextProvider } from "../components/Generator/GeneratorFormContext";
-import Container from "react-bootstrap/Container";
+import Header from "../components/Header/Header";
+
+const GeneratorForm = dynamic(
+  () => import("../components/Generator/GeneratorForm")
+);
 
 const Home: NextPage = () => {
   return (

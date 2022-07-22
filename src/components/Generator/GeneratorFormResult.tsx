@@ -5,7 +5,6 @@ import Alert from "react-bootstrap/Alert";
 import Button from "react-bootstrap/Button";
 import { useDebounce } from "use-debounce";
 import { fetchForumTopicPDFAttachmentLink } from "../../features/services/GradesScrapper/fetchForumTopicPDFAttachmentLink";
-import { generateImageForClasses } from "../../features/services/ImageGenerator/generateImageForClasses";
 import { getURLWithProxy } from "../../features/utils/getURLWithProxy";
 import { useGeneratorFormFields } from "./useGeneratorFormFields";
 
@@ -13,6 +12,10 @@ type IHandleGenerateOptions = {
   pdfLink: string | undefined;
   selectedClass: string | null;
 };
+
+const generateImageForClassesModule = import(
+  "../../features/services/ImageGenerator/generateImageForClasses"
+);
 
 export const GeneratorFormResult = () => {
   const [isError, setIsError] = useState(false);
@@ -58,10 +61,11 @@ export const GeneratorFormResult = () => {
         setIsLoading(true);
 
         try {
-          const blob = await generateImageForClasses({ pdfLink }, [
-            selectedClass,
-          ]);
-          updateResult(blob);
+          await generateImageForClassesModule
+            .then(({ generateImageForClasses }) =>
+              generateImageForClasses({ pdfLink }, [selectedClass])
+            )
+            .then((blob) => updateResult(blob));
         } catch (error) {
           setIsError(true);
         }
