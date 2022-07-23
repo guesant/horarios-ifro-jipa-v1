@@ -3,17 +3,15 @@ import Alert from "react-bootstrap/Alert";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import ToggleButton from "react-bootstrap/ToggleButton";
 import { useContextSelector } from "use-context-selector";
-import { GeneratorFormContext } from "./GeneratorFormContext";
-import {
-  useGeneratorFormField,
-  useGeneratorFormFieldUpdator,
-} from "./useGeneratorFormFields";
+import { GeneratorFormStateStorageContext } from "./GeneratorFormStateStorage";
+import { useGeneratorFormField } from "./useGeneratorFormField";
+import { useGeneratorFormFieldUpdator } from "./useGeneratorFormFieldUpdator";
 import { GENERATOR_FORM_COURSES } from "./utils/GENERATOR_FORM_COURSES";
 
 export const GeneratorFormLabel = () => {
-  const isLoading = useContextSelector(
-    GeneratorFormContext,
-    ({ gradesQuery: { isLoading } }) => isLoading
+  const stateWasRestored = useContextSelector(
+    GeneratorFormStateStorageContext,
+    ({ stateWasRestored }) => stateWasRestored
   );
 
   const selectedCourse = useGeneratorFormField("course");
@@ -58,7 +56,7 @@ export const GeneratorFormLabel = () => {
                 key={radio.id}
                 value={radio.id}
                 name="radio-class"
-                disabled={isLoading}
+                disabled={!stateWasRestored}
                 variant={"outline-secondary"}
                 id={`radio-class-${radio.id}`}
                 checked={selectedClass === radio.id}

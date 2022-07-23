@@ -2,7 +2,9 @@ import ButtonGroup from "react-bootstrap/ButtonGroup";
 import ToggleButton from "react-bootstrap/ToggleButton";
 import { useContextSelector } from "use-context-selector";
 import { GeneratorFormContext } from "./GeneratorFormContext";
-import { useGeneratorFormFields } from "./useGeneratorFormFields";
+import { GeneratorFormStateStorageContext } from "./GeneratorFormStateStorage";
+import { useGeneratorFormField } from "./useGeneratorFormField";
+import { useGeneratorFormFieldUpdator } from "./useGeneratorFormFieldUpdator";
 
 export const GeneratorFormYear = () => {
   const targetCourse = useContextSelector(
@@ -10,12 +12,13 @@ export const GeneratorFormYear = () => {
     ({ targetCourse }) => targetCourse
   );
 
-  const isLoading = useContextSelector(
-    GeneratorFormContext,
-    ({ gradesQuery: { isLoading } }) => isLoading
+  const stateWasRestored = useContextSelector(
+    GeneratorFormStateStorageContext,
+    ({ stateWasRestored }) => stateWasRestored
   );
 
-  const { selectedYear, setSelectedYear } = useGeneratorFormFields();
+  const selectedYear = useGeneratorFormField("year");
+  const setSelectedYear = useGeneratorFormFieldUpdator("year");
 
   if (!targetCourse) {
     return (
@@ -41,7 +44,7 @@ export const GeneratorFormYear = () => {
                 key={radio.id}
                 value={radio.id}
                 name="radio-year"
-                disabled={isLoading}
+                disabled={!stateWasRestored}
                 id={`radio-year-${radio.id}`}
                 variant={"outline-secondary"}
                 checked={selectedYear === radio.id}

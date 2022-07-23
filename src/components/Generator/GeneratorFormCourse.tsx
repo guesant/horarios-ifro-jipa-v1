@@ -1,17 +1,19 @@
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import ToggleButton from "react-bootstrap/ToggleButton";
-import { GeneratorFormContext } from "./GeneratorFormContext";
-import { useGeneratorFormFields } from "./useGeneratorFormFields";
-import { GENERATOR_FORM_COURSES } from "./utils/GENERATOR_FORM_COURSES";
 import { useContextSelector } from "use-context-selector";
+import { GeneratorFormStateStorageContext } from "./GeneratorFormStateStorage";
+import { useGeneratorFormField } from "./useGeneratorFormField";
+import { useGeneratorFormFieldUpdator } from "./useGeneratorFormFieldUpdator";
+import { GENERATOR_FORM_COURSES } from "./utils/GENERATOR_FORM_COURSES";
 
 export const GeneratorFormCourse = () => {
-  const isLoading = useContextSelector(
-    GeneratorFormContext,
-    ({ gradesQuery: { isLoading } }) => isLoading
+  const stateWasRestored = useContextSelector(
+    GeneratorFormStateStorageContext,
+    ({ stateWasRestored }) => stateWasRestored
   );
 
-  const { selectedCourse, setSelectedCourse } = useGeneratorFormFields();
+  const selectedCourse = useGeneratorFormField("course");
+  const setSelectedCourse = useGeneratorFormFieldUpdator("course");
 
   return (
     <>
@@ -25,8 +27,8 @@ export const GeneratorFormCourse = () => {
                 type="radio"
                 key={radio.id}
                 value={radio.id}
-                disabled={isLoading}
                 name="radio-courses"
+                disabled={!stateWasRestored}
                 variant={"outline-secondary"}
                 id={`radio-courses-${radio.id}`}
                 checked={selectedCourse === radio.id}

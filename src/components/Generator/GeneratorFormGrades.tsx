@@ -1,10 +1,8 @@
-import { useContextSelector } from "use-context-selector";
 import Form from "react-bootstrap/Form";
+import { useContextSelector } from "use-context-selector";
 import { GeneratorFormContext } from "./GeneratorFormContext";
-import {
-  useGeneratorFormField,
-  useGeneratorFormFieldUpdator,
-} from "./useGeneratorFormFields";
+import { useGeneratorFormField } from "./useGeneratorFormField";
+import { useGeneratorFormFieldUpdator } from "./useGeneratorFormFieldUpdator";
 
 export const GeneratorFormGrades = () => {
   const grades = useContextSelector(

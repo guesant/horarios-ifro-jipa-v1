@@ -8,7 +8,7 @@ import { useDebounce } from "use-debounce";
 import { fetchForumTopicPDFAttachmentLink } from "../../features/services/GradesScrapper/fetchForumTopicPDFAttachmentLink";
 import { getURLWithProxy } from "../../features/utils/getURLWithProxy";
 import { GeneratorFormContext } from "./GeneratorFormContext";
-import { useGeneratorFormFields } from "./useGeneratorFormFields";
+import { useGeneratorFormField } from "./useGeneratorFormField";
 
 type IHandleGenerateOptions = {
   pdfLink: string | null | undefined;
@@ -24,7 +24,8 @@ export const GeneratorFormResult = () => {
   const [isHandleGenerateLoading, setIsHandleGenerateLoading] = useState(false);
 
   const [resultURL, setResultURL] = useState<string | null>(null);
-  const { selectedForumTopic } = useGeneratorFormFields();
+
+  const selectedForumTopic = useGeneratorFormField("forumTopic");
 
   const resultImgElRef = useRef<HTMLImageElement>(null);
 

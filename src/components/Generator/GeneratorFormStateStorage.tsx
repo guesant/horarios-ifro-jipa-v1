@@ -6,10 +6,10 @@ import {
   useMemo,
   useState,
 } from "react";
-import { useContextSelector } from "use-context-selector";
+import { createContext, useContextSelector } from "use-context-selector";
 import { theLocalStorage } from "../../features/utils/theLocalStorage";
 import { GeneratorFormContext } from "./GeneratorFormContext";
-import { useGeneratorFormField } from "./useGeneratorFormFields";
+import { useGeneratorFormField } from "./useGeneratorFormField";
 
 const KEY = "generatorFormState";
 
@@ -32,6 +32,12 @@ const useGeneratorFormCurrentState = () => {
     [selectedYear, selectedClass, selectedCourse]
   );
 };
+
+type IGeneratorFormStateStorageContext = { stateWasRestored: boolean };
+
+export const GeneratorFormStateStorageContext = createContext(
+  {} as IGeneratorFormStateStorageContext
+);
 
 export const GeneratorFormStateStorage: FC<PropsWithChildren<{}>> = ({
   children,
@@ -71,5 +77,9 @@ export const GeneratorFormStateStorage: FC<PropsWithChildren<{}>> = ({
     }
   }, [stateWasRestored, currentState]);
 
-  return <>{children}</>;
+  return (
+    <GeneratorFormStateStorageContext.Provider value={{ stateWasRestored }}>
+      {children}
+    </GeneratorFormStateStorageContext.Provider>
+  );
 };
