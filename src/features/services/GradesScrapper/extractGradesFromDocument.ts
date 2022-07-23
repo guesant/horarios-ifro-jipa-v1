@@ -1,10 +1,10 @@
-import { extractForumTopicsFromDocument } from "./extractForumTopicsFromDocument";
+import { extractForumTopicsFromDocument } from "./utils/extractForumTopicsFromDocument";
 
 const PATTERNS_TO_INCLUDE: string[] = ["HORÁRIO", "TÉCNICO"];
 const PATTERNS_TO_EXCLUDE: string[] = ["EXAME", "RECUPERAÇÃO"];
 
-export const extractGradesFromDocument = (doc: Document) =>
-  extractForumTopicsFromDocument(doc).filter(({ title }) => {
+export const extractGradesFromDocument = async (doc: Document) =>
+  (await extractForumTopicsFromDocument(doc)).filter(({ title }) => {
     const text = title.toUpperCase();
 
     return (

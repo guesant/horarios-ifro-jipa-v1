@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { saveAs } from "file-saver";
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Alert from "react-bootstrap/Alert";
 import Button from "react-bootstrap/Button";
+import { useContextSelector } from "use-context-selector";
 import { useDebounce } from "use-debounce";
 import { fetchForumTopicPDFAttachmentLink } from "../../features/services/GradesScrapper/fetchForumTopicPDFAttachmentLink";
 import { getURLWithProxy } from "../../features/utils/getURLWithProxy";
@@ -10,7 +11,7 @@ import { GeneratorFormContext } from "./GeneratorFormContext";
 import { useGeneratorFormFields } from "./useGeneratorFormFields";
 
 type IHandleGenerateOptions = {
-  pdfLink: string | undefined;
+  pdfLink: string | null | undefined;
   selectedClass: string | null;
 };
 
@@ -27,8 +28,20 @@ export const GeneratorFormResult = () => {
 
   const resultImgElRef = useRef<HTMLImageElement>(null);
 
-  const { gradesQuery, targetCourseYearClass } =
-    useContext(GeneratorFormContext);
+  const gradesQueryIsLoading = useContextSelector(
+    GeneratorFormContext,
+    ({ gradesQuery: { isLoading } }) => isLoading
+  );
+
+  const gradesQueryIsError = useContextSelector(
+    GeneratorFormContext,
+    ({ gradesQuery: { isError } }) => isError
+  );
+
+  const targetCourseYearClass = useContextSelector(
+    GeneratorFormContext,
+    ({ targetCourseYearClass }) => targetCourseYearClass
+  );
 
   const selectedClass = targetCourseYearClass?.id ?? null;
 
@@ -91,14 +104,14 @@ export const GeneratorFormResult = () => {
 
   const isLoading = Boolean(
     pdfLinkQuery.isLoading ||
-      gradesQuery.isLoading ||
+      gradesQueryIsLoading ||
       isHandleGenerateLoading ||
       pdfLink !== debouncedPDFLink ||
       selectedClass !== debouncedSelectedClass
   );
 
   const isError = Boolean(
-    pdfLinkQuery.isError || gradesQuery.isError || isHandleGenerateError
+    pdfLinkQuery.isError || gradesQueryIsError || isHandleGenerateError
   );
 
   useEffect(() => {

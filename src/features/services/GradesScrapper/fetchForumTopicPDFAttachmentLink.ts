@@ -1,4 +1,4 @@
-import { parseDocument } from "../../utils/parseDocument";
+import { parseDocument } from "../../utils/DOM/parseDocument";
 import { extractPDFAttachmentFromTopicDocument } from "./extractPDFAttachmentFromTopicDocument";
 
 export const fetchForumTopicPDFAttachmentLink = (forumTopicURL: string) =>

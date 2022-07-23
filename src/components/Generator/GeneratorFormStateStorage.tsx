@@ -6,10 +6,10 @@ import {
   useMemo,
   useState,
 } from "react";
-import { useFormContext } from "react-hook-form";
-import { IGeneratorFormContextFieldValues } from "./interfaces/IGeneratorFormContextFieldValues";
+import { useContextSelector } from "use-context-selector";
 import { theLocalStorage } from "../../features/utils/theLocalStorage";
-import { useGeneratorFormFields } from "./useGeneratorFormFields";
+import { GeneratorFormContext } from "./GeneratorFormContext";
+import { useGeneratorFormField } from "./useGeneratorFormFields";
 
 const KEY = "generatorFormState";
 
@@ -18,9 +18,10 @@ const getSavedState = () => JSON.parse(theLocalStorage?.getItem(KEY) ?? "null");
 const setSavedState = (state: any) =>
   theLocalStorage?.setItem(KEY, JSON.stringify(state));
 
-const useCurrentState = () => {
-  const { selectedYear, selectedClass, selectedCourse } =
-    useGeneratorFormFields();
+const useGeneratorFormCurrentState = () => {
+  const selectedCourse = useGeneratorFormField("course");
+  const selectedYear = useGeneratorFormField("year");
+  const selectedClass = useGeneratorFormField("class");
 
   return useMemo(
     () => ({
@@ -37,9 +38,12 @@ export const GeneratorFormStateStorage: FC<PropsWithChildren<{}>> = ({
 }) => {
   const [stateWasRestored, setStateWasRestored] = useState(false);
 
-  const { reset } = useFormContext<IGeneratorFormContextFieldValues>();
+  const setFormState = useContextSelector(
+    GeneratorFormContext,
+    ({ setFormState }) => setFormState
+  );
 
-  const currentState = useCurrentState();
+  const currentState = useGeneratorFormCurrentState();
 
   const restoreState = useCallback(() => {
     if (!theLocalStorage) {
@@ -49,11 +53,11 @@ export const GeneratorFormStateStorage: FC<PropsWithChildren<{}>> = ({
     const savedState = getSavedState();
 
     if (savedState) {
-      reset(savedState);
+      setFormState((state) => ({ ...state, ...savedState }));
     }
 
     setStateWasRestored(true);
-  }, []);
+  }, [setFormState]);
 
   useEffect(() => {
     if (!stateWasRestored) {

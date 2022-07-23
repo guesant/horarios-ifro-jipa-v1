@@ -1,13 +1,26 @@
+import { dehydrate, QueryClient } from "@tanstack/react-query";
 import type { NextPage } from "next";
 import dynamic from "next/dynamic";
 import Head from "next/head";
 import Footer from "../components/Footer/Footer";
 import { GeneratorFormContextProvider } from "../components/Generator/GeneratorFormContext";
 import Header from "../components/Header/Header";
+import { fetchGrades } from "../features/services/GradesScrapper/fetchGrades";
 
 const GeneratorForm = dynamic(
   () => import("../components/Generator/GeneratorForm")
 );
+export async function getStaticProps() {
+  const queryClient = new QueryClient();
+
+  await queryClient.prefetchQuery(["grades"], fetchGrades);
+
+  return {
+    props: {
+      dehydratedState: dehydrate(queryClient),
+    },
+  };
+}
 
 const Home: NextPage = () => {
   return (

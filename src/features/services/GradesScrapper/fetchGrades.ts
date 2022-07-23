@@ -1,13 +1,11 @@
 import { extractGradesFromDocument } from "./extractGradesFromDocument";
 import { getURLWithProxy } from "../../utils/getURLWithProxy";
-import { parseDocument } from "../../utils/parseDocument";
+import { parseDocument } from "../../utils/DOM/parseDocument";
 
-const NEXT_PUBLIC_GRADES_URL = process.env.NEXT_PUBLIC_GRADES_URL!;
+const gradesUrl = process.env.NEXT_PUBLIC_GRADES_URL!;
 
 export const fetchGrades = () =>
-  fetch(getURLWithProxy(NEXT_PUBLIC_GRADES_URL))
+  fetch(getURLWithProxy(gradesUrl))
     .then((res) => res.text())
     .then(parseDocument)
     .then(extractGradesFromDocument);
-
-export const fetchGrades2 = () => Promise.resolve([]);

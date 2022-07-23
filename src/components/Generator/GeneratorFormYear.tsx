@@ -1,14 +1,19 @@
-import { useContext } from "react";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import ToggleButton from "react-bootstrap/ToggleButton";
+import { useContextSelector } from "use-context-selector";
 import { GeneratorFormContext } from "./GeneratorFormContext";
 import { useGeneratorFormFields } from "./useGeneratorFormFields";
 
 export const GeneratorFormYear = () => {
-  const {
-    targetCourse,
-    gradesQuery: { isLoading },
-  } = useContext(GeneratorFormContext);
+  const targetCourse = useContextSelector(
+    GeneratorFormContext,
+    ({ targetCourse }) => targetCourse
+  );
+
+  const isLoading = useContextSelector(
+    GeneratorFormContext,
+    ({ gradesQuery: { isLoading } }) => isLoading
+  );
 
   const { selectedYear, setSelectedYear } = useGeneratorFormFields();
 

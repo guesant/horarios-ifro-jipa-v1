@@ -1,16 +1,24 @@
-import { useContext } from "react";
+import { useContextSelector } from "use-context-selector";
 import Form from "react-bootstrap/Form";
 import { GeneratorFormContext } from "./GeneratorFormContext";
-import { useGeneratorFormFields } from "./useGeneratorFormFields";
+import {
+  useGeneratorFormField,
+  useGeneratorFormFieldUpdator,
+} from "./useGeneratorFormFields";
 
 export const GeneratorFormGrades = () => {
-  const {
-    grades,
-    gradesQuery: { isLoading },
-  } = useContext(GeneratorFormContext);
+  const grades = useContextSelector(
+    GeneratorFormContext,
+    ({ grades }) => grades
+  );
 
-  const { selectedForumTopic, setSelectedForumTopic } =
-    useGeneratorFormFields();
+  const isLoading = useContextSelector(
+    GeneratorFormContext,
+    ({ gradesQuery: { isLoading } }) => isLoading
+  );
+
+  const selectedForumTopic = useGeneratorFormField("forumTopic");
+  const setSelectedForumTopic = useGeneratorFormFieldUpdator("forumTopic");
 
   return (
     <>
@@ -21,7 +29,7 @@ export const GeneratorFormGrades = () => {
           value={selectedForumTopic ?? ""}
           onChange={(e) => setSelectedForumTopic(e.target.value)}
         >
-          <option disabled value="">
+          <option disabled value={""}>
             {isLoading
               ? "Carregando as grades de horários..."
               : "Selecione uma opção"}

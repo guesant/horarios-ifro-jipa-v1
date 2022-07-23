@@ -1,18 +1,25 @@
-import { useContext, useMemo } from "react";
+import { useMemo } from "react";
 import Alert from "react-bootstrap/Alert";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import ToggleButton from "react-bootstrap/ToggleButton";
+import { useContextSelector } from "use-context-selector";
 import { GeneratorFormContext } from "./GeneratorFormContext";
-import { useGeneratorFormFields } from "./useGeneratorFormFields";
+import {
+  useGeneratorFormField,
+  useGeneratorFormFieldUpdator,
+} from "./useGeneratorFormFields";
 import { GENERATOR_FORM_COURSES } from "./utils/GENERATOR_FORM_COURSES";
 
 export const GeneratorFormLabel = () => {
-  const {
-    gradesQuery: { isLoading },
-  } = useContext(GeneratorFormContext);
+  const isLoading = useContextSelector(
+    GeneratorFormContext,
+    ({ gradesQuery: { isLoading } }) => isLoading
+  );
 
-  const { selectedCourse, selectedYear, selectedClass, setSelectedClass } =
-    useGeneratorFormFields();
+  const selectedCourse = useGeneratorFormField("course");
+  const selectedYear = useGeneratorFormField("year");
+  const selectedClass = useGeneratorFormField("class");
+  const setSelectedClass = useGeneratorFormFieldUpdator("class");
 
   const course = useMemo(
     () => GENERATOR_FORM_COURSES.find((i) => i.id === selectedCourse),

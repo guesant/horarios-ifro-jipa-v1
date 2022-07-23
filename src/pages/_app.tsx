@@ -1,5 +1,6 @@
 import type { AppProps } from "next/app";
 import {
+  Hydrate,
   QueryClient,
   QueryClientConfig,
   QueryClientProvider,
@@ -16,7 +17,9 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <QueryClientProvider client={queryClient}>
-        <Component {...pageProps} />
+        <Hydrate state={pageProps.dehydratedState}>
+          <Component {...pageProps} />
+        </Hydrate>
       </QueryClientProvider>
     </>
   );
