@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { saveAs } from "file-saver";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import Alert from "react-bootstrap/Alert";
 import Button from "react-bootstrap/Button";
 import { useDebounce } from "use-debounce";
@@ -24,6 +24,8 @@ export const GeneratorFormResult = () => {
 
   const [resultURL, setResultURL] = useState<string | null>(null);
   const { selectedForumTopic } = useGeneratorFormFields();
+
+  const resultImgElRef = useRef<HTMLImageElement>(null);
 
   const { gradesQuery, targetCourseYearClass } =
     useContext(GeneratorFormContext);
@@ -106,6 +108,14 @@ export const GeneratorFormResult = () => {
     });
   }, [handleGenerate, debouncedPDFLink, debouncedSelectedClass]);
 
+  useEffect(() => {
+    const resultImgEl = resultImgElRef.current;
+
+    if (resultImgEl && resultURL) {
+      resultImgEl.scrollIntoView({ block: "center" });
+    }
+  }, [resultImgElRef, resultURL]);
+
   if (!selectedClass) {
     return (
       <>
@@ -168,6 +178,7 @@ export const GeneratorFormResult = () => {
             <a href={resultURL}>
               <img
                 src={resultURL}
+                ref={resultImgElRef}
                 style={{ height: "300px" }}
                 alt="Visualização da imagem gerada."
               />
