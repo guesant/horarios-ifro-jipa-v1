@@ -9,6 +9,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import { createContext } from "use-context-selector";
 import { fetchGrades } from "../../features/services/GradesScrapper/fetchGrades";
 import { IExtractedForumTopic } from "../../features/services/GradesScrapper/interfaces/IExtractedForumTopic";
 import { GeneratorFormStateStorage } from "./GeneratorFormStateStorage";
@@ -17,7 +18,6 @@ import { GENERATOR_FORM_COURSES } from "./utils/GENERATOR_FORM_COURSES";
 import { IGeneratorFormCourse } from "./utils/IGeneratorFormCourse";
 import { IGeneratorFormCourseYear } from "./utils/IGeneratorFormCourseYear";
 import { IGeneratorFormCourseYearLabel } from "./utils/IGeneratorFormCourseYearLabel";
-import { createContext } from "use-context-selector";
 
 export type IGeneratorFormContext = {
   grades: IExtractedForumTopic[];
@@ -39,7 +39,7 @@ export const GeneratorFormContext = createContext({} as IGeneratorFormContext);
 export const GeneratorFormContextProvider: FC<PropsWithChildren<{}>> = ({
   children,
 }) => {
-  const gradesQuery = useQuery(["grades"], fetchGrades);
+  const gradesQuery = useQuery(["grades"], () => fetchGrades());
 
   const grades = useMemo(
     () =>
