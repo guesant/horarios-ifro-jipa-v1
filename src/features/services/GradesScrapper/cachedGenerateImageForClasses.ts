@@ -12,7 +12,7 @@ export const cachedGenerateImageForClasses = async (
 ) => {
   const targetCacheKey = `result-${selectedClass}@${pdfLink}`;
 
-  const cachedBlob = await getCachedBlob(targetCacheKey);
+  const cachedBlob = await getCachedBlob(targetCacheKey, { type: "image/png" });
 
   if (cachedBlob) {
     return cachedBlob;

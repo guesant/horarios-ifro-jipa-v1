@@ -31,7 +31,10 @@ export const setCached = (key: string, value: any) =>
     resolve(undefined);
   });
 
-export const getCachedBlob = (key: string) =>
+export const getCachedBlob = (
+  key: string,
+  options?: BlobPropertyBag | undefined
+) =>
   getCached<number[]>(key).then(
-    (data) => data && new Blob([Int8Array.from(data)])
+    (data) => data && new Blob([Int8Array.from(data)], options)
   );
