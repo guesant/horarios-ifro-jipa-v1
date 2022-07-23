@@ -1,1 +1,5 @@
-declare module "query-selector";
+declare module "query-selector" {
+  const qs = <T extends Element = Element>(query: string, doc: Document|Node|Element) => NodeListOf<T>;
+
+  export default qs;
+}

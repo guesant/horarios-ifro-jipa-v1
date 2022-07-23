@@ -1,10 +1,4 @@
-const getDOMParser = async () => {
-  if (typeof DOMParser !== "undefined") {
-    return DOMParser;
-  }
-
-  return import("xmldom").then(({ DOMParser }) => DOMParser);
-};
+import { getDOMParser } from "./getDOMParser";
 
 export const parseDocument = async (html: string): Promise<Document> => {
   const DOMParser = await getDOMParser();
