@@ -427,6 +427,11 @@ braces@^3.0.2:
   dependencies:
     fill-range "^7.0.1"
 
+cache-service-cache-module@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/cache-service-cache-module/-/cache-service-cache-module-2.0.1.tgz#80ec1d97dee78624c3f5d9d5fa9b561fd858e307"
+  integrity sha512-Woh8hheJs6m0Mm5kuqtji/8S/Lh5vyE9hh3E4nCp3ah85CJ4Y4/yegjcUe0kEzW14ZjAE46UJBp3FOsZNVmmGA==
+
 call-bind@^1.0.0, call-bind@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/call-bind/-/call-bind-1.0.2.tgz#b1d4e89e688119c3c9a903ad30abb2f6a919be3c"

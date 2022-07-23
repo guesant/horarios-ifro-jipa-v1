@@ -3,3 +3,6 @@ declare module "query-selector" {
 
   export default qs;
 }
+
+
+declare module "cache-service-cache-module"

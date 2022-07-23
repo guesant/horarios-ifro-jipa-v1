@@ -5,8 +5,9 @@ import Alert from "react-bootstrap/Alert";
 import Button from "react-bootstrap/Button";
 import { useContextSelector } from "use-context-selector";
 import { useDebounce } from "use-debounce";
-import { fetchForumTopicPDFAttachmentLink } from "../../features/services/GradesScrapper/fetchForumTopicPDFAttachmentLink";
 import { getURLWithProxy } from "../../features/utils/getURLWithProxy";
+import { cachedFetchForumTopicPDFAttachmentLink } from "../../features/services/GradesScrapper/cachedFetchForumTopicPDFAttachmentLink";
+import { cachedGenerateImageForClasses } from "../../features/services/GradesScrapper/cachedGenerateImageForClasses";
 import { GeneratorFormContext } from "./GeneratorFormContext";
 import { useGeneratorFormField } from "./useGeneratorFormField";
 
@@ -14,10 +15,6 @@ type IHandleGenerateOptions = {
   pdfLink: string | null | undefined;
   selectedClass: string | null;
 };
-
-const generateImageForClassesModule = import(
-  "../../features/services/ImageGenerator/generateImageForClasses"
-);
 
 export const GeneratorFormResult = () => {
   const [isHandleGenerateError, setHandleGenerateIsError] = useState(false);
@@ -53,7 +50,7 @@ export const GeneratorFormResult = () => {
         return undefined;
       }
 
-      const pdfLink = await fetchForumTopicPDFAttachmentLink(
+      const pdfLink = await cachedFetchForumTopicPDFAttachmentLink(
         getURLWithProxy(selectedForumTopic)
       );
 
@@ -63,15 +60,14 @@ export const GeneratorFormResult = () => {
 
   const { data: pdfLink } = pdfLinkQuery;
 
-  const [debouncedPDFLink] = useDebounce(pdfLink, 50);
-  const [debouncedSelectedClass] = useDebounce(selectedClass, 50);
+  const [debouncedPDFLink] = useDebounce(pdfLink, 5);
+  const [debouncedSelectedClass] = useDebounce(selectedClass, 5);
 
   const updateResultBlob = useCallback((resultBlob: Blob | null) => {
     setResultURL((resultURL) => {
       if (resultURL) {
         URL.revokeObjectURL(resultURL);
       }
-
       return resultBlob && URL.createObjectURL(resultBlob);
     });
   }, []);
@@ -86,11 +82,12 @@ export const GeneratorFormResult = () => {
         setIsHandleGenerateLoading(true);
 
         try {
-          await generateImageForClassesModule
-            .then(({ generateImageForClasses }) =>
-              generateImageForClasses({ pdfLink }, [selectedClass])
-            )
-            .then((blob) => updateResultBlob(blob));
+          const blob = await cachedGenerateImageForClasses(
+            pdfLink,
+            selectedClass
+          );
+
+          updateResultBlob(blob);
         } catch (error) {
           setHandleGenerateIsError(true);
         }

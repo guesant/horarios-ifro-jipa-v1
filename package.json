@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^4.0.8",
+    "cache-service-cache-module": "^2.0.1",
     "file-saver": "^2.0.5",
     "next": "12.2.2",
     "pdfjs-dist": "^2.14.305",
