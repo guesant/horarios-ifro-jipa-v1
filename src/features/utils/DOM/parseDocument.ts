@@ -1,9 +1,6 @@
-import { getDOMParser } from "./getDOMParser";
+import { getDOMParserInstance } from "./getDOMParserInstance";
 
 export const parseDocument = async (html: string): Promise<Document> => {
-  const DOMParser = await getDOMParser();
-
-  const parser = new DOMParser();
-
+  const parser = await getDOMParserInstance();
   return parser.parseFromString(html, "text/html");
 };
