@@ -17,16 +17,24 @@ cd horarios-ifro-jipa
 cp .env.example .env
 ```
 
+### With docker-compose
+
+```
+docker-compose up
+```
+
+### Without docker-compose
+
 Start the proxy server:
 
 ```sh
-(cd services/proxy; yarn start)
+(cd services/proxy; yarn && yarn start)
 ```
 
 In a new terminal tab, run the development server:
 
 ```bash
-yarn dev
+yarn && yarn dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.

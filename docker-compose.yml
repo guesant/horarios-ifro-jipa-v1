@@ -1,0 +1,31 @@
+services:
+  app:
+    user: node
+    image: node:lts
+    working_dir: /app
+    command: sh -c "yarn && yarn dev"
+    volumes:
+      - ./:/app
+    ports:
+      - 3000:3000
+    networks:
+      - horarios-ifro-jipa-net
+    depends_on:
+      - proxy
+
+  proxy:
+    hostname: localhost
+    image: node:lts
+    user: node
+    working_dir: /app
+    command: sh -c "yarn && yarn start"
+    volumes:
+      - ./services/proxy:/app
+    ports:
+      - 8080:8080
+    networks:
+      - horarios-ifro-jipa-net
+
+networks:
+  horarios-ifro-jipa-net:
+    driver: host
